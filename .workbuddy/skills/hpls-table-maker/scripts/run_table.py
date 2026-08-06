@@ -3,10 +3,20 @@
 
 from __future__ import annotations
 
-import argparse
-import os
 import subprocess
 import sys
+
+# 自动安装缺失依赖
+_DEPENDENCIES = ("openpyxl",)
+for _pkg in _DEPENDENCIES:
+    try:
+        __import__(_pkg)
+    except ImportError:
+        print(f"[SETUP] 安装依赖: {_pkg}")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", _pkg])
+
+import argparse
+import os
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
