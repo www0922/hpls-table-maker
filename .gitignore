@@ -1,0 +1,24 @@
+# 输出目录（运行时生成）
+output_result/
+
+# Python 编译缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# Excel 临时文件
+~$*.xlsx
+~$*.xls
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 系统文件
+Thumbs.db
+Desktop.ini
+
+# 打包产物（skill zip 每次重新打包即可）
+*.zip
