@@ -44,7 +44,16 @@ CONFIGS = {
         templates=("XP_pooling表模板.xlsx", "XP_PCR定量表模板.xlsx"),
         output_names=("{date}文库pooling表.xlsx", "{date}PCR定量表.xlsx"),
     ),
+    "zhenmai": TableConfig(
+        project_dir="XP",
+        required_keywords=("Xplus上机", "质检", "自建库", "纯化", "qPCR"),
+        templates=("XP_pooling表模板.xlsx", "XP_PCR定量表模板.xlsx"),
+        output_names=("{date}文库pooling表.xlsx", "{date}PCR定量表.xlsx"),
+    ),
 }
+
+# 别名映射（处理逻辑完全相同的型号）
+ALIASES = {"zhenmai": "xp"}
 
 COMMON_MODULES = (
     "__init__.py",

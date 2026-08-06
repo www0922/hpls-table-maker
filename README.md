@@ -1,6 +1,6 @@
 # HP Table Process
 
-一键生成 HPLS 实验室 PE100、PE150、XP 三种测序文库 Pooling 表，通过 WorkBuddy Skill 统一调度，说句话就能跑。
+一键生成 HPLS 实验室 PE100、PE150、XP（含真迈）三种测序文库 Pooling 表，通过 WorkBuddy Skill 统一调度，说句话就能跑。
 
 ## 前置条件
 
@@ -25,12 +25,13 @@ cd hpls-table-maker
 |------|------|---------|
 | PE100 | `PE_100/input_data/` | 上机表、质检表、自建库表（各一个） |
 | PE150 | `PE_150/input_data/` | 上机表、质检表、自建库表（各一个） |
-| XP | `XP/input_data/` | 上机表、质检表、自建库表、纯化表、qPCR表（各一个） |
+| XP / 真迈 | `XP/input_data/` | 上机表、质检表、自建库表、纯化表、qPCR表（各一个） |
 
 ### 3. 打开 WorkBuddy，说句话就行
 
 ```
 帮我做 PE100 表
+帮我做真迈表
 ```
 或
 ```

@@ -23,7 +23,7 @@ agent_created: true
 
 1. 用户提到 `PE100`、`PE 100`、`100 测序`：选择 `pe100`。
 2. 用户提到 `PE150`、`PE 150`、`150 测序`：选择 `pe150`。
-3. 用户提到 `XP`、`X Plus`、`Xplus`、`NovaSeq X Plus`：选择 `xp`。
+3. 用户提到 `XP`、`X Plus`、`Xplus`、`NovaSeq X Plus`、`真迈`、`真迈表`：选择 `xp`。
 4. 无法唯一判断时，只追问一次：“需要做 PE100、PE150 还是 XP 表？”
 
 不要根据文件内容猜测型号后静默执行。
