@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 # 自动安装缺失依赖
-_DEPENDENCIES = ("openpyxl",)
+_DEPENDENCIES = ("openpyxl==3.1.5",)
 for _pkg in _DEPENDENCIES:
     try:
         __import__(_pkg)

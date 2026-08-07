@@ -49,7 +49,7 @@ python XP/code/run_all.py        # XP
 python ZM/code/run_all.py        # 真迈
 ```
 
-首次运行如需安装 `openpyxl`，Skill 会自动处理；命令行请手动执行 `pip install openpyxl`。
+首次运行如需安装 `openpyxl`，Skill 会自动安装 `openpyxl==3.1.5`；命令行请手动执行 `pip install openpyxl==3.1.5`。
 
 ## 项目结构
 
