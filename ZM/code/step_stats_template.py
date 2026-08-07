@@ -65,8 +65,8 @@ def build_column_map(src_ws, dst_ws):
     return mapping
 
 
-def main():
-    workbook = openpyxl.load_workbook(DST_POOL)
+def main(pool_wb=None):
+    workbook = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST_POOL)
     src_ws = workbook[SRC_SHEET]
     dst_ws = workbook[DST_SHEET]
 
@@ -185,7 +185,8 @@ def main():
         for cc in range(1, 19):
             dst_ws.cell(row=rr, column=cc).border = border
 
-    workbook.save(DST_POOL)
+    if pool_wb is None:
+        workbook.save(DST_POOL)
     print(f"\n[DONE] 下机数据统计模版填充完成 -> 写入 {dst_row - DST_DATA_START} 行")
 
 

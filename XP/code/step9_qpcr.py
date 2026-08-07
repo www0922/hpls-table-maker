@@ -240,43 +240,45 @@ def write_record(ws, row, seq, record, pool_record, a_lookup, external_lookup, s
         ws.cell(row=row, column=col).border = THIN_BORDER
 
 
-def main():
-    pool_workbook = openpyxl.load_workbook(DST_POOL, data_only=False)
-    pool_groups = collect_pooling_groups(pool_workbook)
-    pending = collect_pending_dilution_rows(pool_workbook)
+def main(pool_wb=None, pcr_wb=None):
+    pool_wb_local = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST_POOL, data_only=False)
+    pool_groups = collect_pooling_groups(pool_wb_local)
+    pending = collect_pending_dilution_rows(pool_wb_local)
     a_lookup = build_a_table_c_lookup()
     external_lookup = build_external_lookup()
     self_hybrid, self_sample = build_self_lookup()
 
     from datetime import datetime
-    pcr_workbook = openpyxl.load_workbook(DST_PCR)
+    pcr_wb_local = pcr_wb if pcr_wb is not None else openpyxl.load_workbook(DST_PCR)
     base_title = datetime.now().strftime("%m%d")
     # 第一个子表重命名
-    pcr_workbook.worksheets[0].title = base_title
-    while len(pending) > len(pcr_workbook.sheetnames) * ROWS_PER_SHEET:
-        new_sheet = pcr_workbook.copy_worksheet(pcr_workbook.worksheets[-1])
-        new_sheet.title = f"{base_title}-{len(pcr_workbook.sheetnames)}"
+    pcr_wb_local.worksheets[0].title = base_title
+    while len(pending) > len(pcr_wb_local.sheetnames) * ROWS_PER_SHEET:
+        new_sheet = pcr_wb_local.copy_worksheet(pcr_wb_local.worksheets[-1])
+        new_sheet.title = f"{base_title}-{len(pcr_wb_local.sheetnames)}"
         print(f"  已增加sheet：{new_sheet.title}")
 
-    for ws in pcr_workbook.worksheets:
+    for ws in pcr_wb_local.worksheets:
         clear_pcr_targets(ws)
 
     for index, record in enumerate(pending):
         sheet_index = index // ROWS_PER_SHEET
         row = DATA_START + index % ROWS_PER_SHEET
         seq = 3 + index % ROWS_PER_SHEET  # 每个子表3→41
-        ws = pcr_workbook.worksheets[sheet_index]
+        ws = pcr_wb_local.worksheets[sheet_index]
         pool_record = pool_groups.get(record["sample_id"], {})
         write_record(ws, row, seq, record, pool_record, a_lookup, external_lookup, self_hybrid, self_sample)
 
     # G3: 本子表最后序号+1
-    for idx, ws in enumerate(pcr_workbook.worksheets):
+    for idx, ws in enumerate(pcr_wb_local.worksheets):
         count = min(len(pending) - idx * ROWS_PER_SHEET, ROWS_PER_SHEET)
         last_seq = 3 + count - 1 if count > 0 else 2  # 3→41
         ws.cell(row=3, column=7).value = last_seq + 1
 
-    pool_workbook.close()
-    pcr_workbook.save(DST_PCR)
+    if pool_wb is None:
+        pool_wb_local.close()
+    if pcr_wb is None:
+        pcr_wb_local.save(DST_PCR)
     print(f"  qPCR定量表: 写入{len(pending)}条")
     print(f"\n[DONE] 步骤九完成 -> {DST_PCR}")
 

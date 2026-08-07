@@ -164,13 +164,13 @@ def fill_sheet(
     print(f"  Sheet {name}: 匹配={matched}, 未匹配={missed}")
 
 
-def main():
+def main(pool_wb=None):
     external_lookup = build_external_lookup()
     self_hybrid_lookup, self_sample_lookup = build_self_lookup()
     purify_contracts = build_purify_lookup()
     qpcr_lookup = build_qpcr_lookup()
 
-    workbook = openpyxl.load_workbook(DST_POOL)
+    workbook = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST_POOL)
     for name in SHEETS:
         print(f"\n处理 [{name}]")
         fill_sheet(
@@ -182,7 +182,8 @@ def main():
             qpcr_lookup,
             name,
         )
-    workbook.save(DST_POOL)
+    if pool_wb is None:
+        workbook.save(DST_POOL)
     print(f"\n[DONE] 步骤三完成 -> {DST_POOL}")
 
 

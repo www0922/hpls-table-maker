@@ -131,11 +131,12 @@ def validate_downstream(pool_workbook):
     return len(dilution_rows), len(pcr_ids), errors
 
 
-def main():
+def main(pool_wb=None):
     pool_workbook = openpyxl.load_workbook(DST_POOL, data_only=False)
     group_count, pooling_errors, warnings = validate_pooling(pool_workbook)
     dilution_count, pcr_count, downstream_errors = validate_downstream(pool_workbook)
-    pool_workbook.close()
+    if pool_wb is None:
+        pool_workbook.close()
 
     errors = pooling_errors + downstream_errors
     print(f"校验统计: Pooling {group_count}组, 稀释表{dilution_count}条, qPCR {pcr_count}条")

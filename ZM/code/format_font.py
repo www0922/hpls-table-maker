@@ -12,11 +12,11 @@ FONT = Font(name="Times New Roman", size=10)
 RED_BOLD = Font(name="Times New Roman", size=10, bold=True, color="FF0000")
 
 
-def main():
-    workbook = openpyxl.load_workbook(DST_POOL)
+def main(pool_wb=None, pcr_wb=None):
+    workbook_local = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST_POOL)
 
-    for sheet_name in workbook.sheetnames:
-        ws = workbook[sheet_name]
+    for sheet_name in workbook_local.sheetnames:
+        ws = workbook_local[sheet_name]
         from config import get_target_sheets
         is_dilution = ws.title not in set(get_target_sheets())
         max_col = 19 if is_dilution else 23
@@ -82,18 +82,19 @@ def main():
 
     # 子表排序: ABCD数据面 → 文库稀释计算表 → 下机数据统计模版
     desired = list(get_target_sheets()) + ["文库稀释计算表", "下机数据统计模版"]
-    current = workbook.sheetnames
+    current = workbook_local.sheetnames
     new_order = [s for s in desired if s in current] + [s for s in current if s not in desired]
-    workbook._sheets = [workbook[s] for s in new_order]
+    workbook_local._sheets = [workbook_local[s] for s in new_order]
 
-    workbook.save(DST_POOL)
+    if pool_wb is None:
+        workbook_local.save(DST_POOL)
     print(f"\n[DONE] Pooling -> {DST_POOL}")
 
     # PCR 定量表字体及条件格式
     from config import DST_PCR
-    pcr_wb = openpyxl.load_workbook(DST_PCR)
+    pcr_wb_local = pcr_wb if pcr_wb is not None else openpyxl.load_workbook(DST_PCR)
     yellow_fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
-    for ws in pcr_wb.worksheets:
+    for ws in pcr_wb_local.worksheets:
         for row in ws.iter_rows(min_row=1, max_row=ws.max_row, max_col=18):
             for cell in row:
                 if cell.value is not None:
@@ -119,7 +120,8 @@ def main():
                 cell.font = sub_header_font
 
         print(f"PCR [{ws.title}]: 字体已设置")
-    pcr_wb.save(DST_PCR)
+    if pcr_wb is None:
+        pcr_wb_local.save(DST_PCR)
     print(f"[DONE] PCR -> {DST_PCR}")
 
 

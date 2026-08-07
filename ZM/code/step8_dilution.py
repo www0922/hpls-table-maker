@@ -129,8 +129,8 @@ def is_hgc_or_ex(sample_id):
     return bool(re.match(r"^HGC", s, re.IGNORECASE) or re.search(r"[EX]$", s, re.IGNORECASE))
 
 
-def main():
-    workbook = openpyxl.load_workbook(DST_POOL)
+def main(pool_wb=None):
+    workbook = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST_POOL)
     dilution_sheet = workbook['文库稀释计算表']
     dilution_sheet.cell(row=1, column=1).value = f"{datetime.now():%Y%m%d}-LH00"
     dilution_sheet.cell(row=2, column=2).value = "SampleID"
@@ -176,7 +176,8 @@ def main():
         dilution_sheet.merge_cells(start_row=current_start, start_column=D_I,
                                    end_row=current_row - 1, end_column=D_I)
 
-    workbook.save(DST_POOL)
+    if pool_wb is None:
+        workbook.save(DST_POOL)
     print(f"  稀释表: {len(records)}行")
     print(f"\n[DONE] 步骤八完成 -> {DST_POOL}")
 

@@ -231,20 +231,20 @@ def write_record(ws, row, seq, record, pool_record, a_lookup, external_lookup, s
         ws.cell(row=row, column=col).border = THIN_BORDER
 
 
-def main():
-    pool_workbook = openpyxl.load_workbook(DST_POOL, data_only=False)
-    pool_groups = collect_pooling_groups(pool_workbook)
-    pending = collect_pending_dilution_rows(pool_workbook)
+def main(pool_wb=None, pcr_wb=None):
+    pool_wb_local = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST_POOL, data_only=False)
+    pool_groups = collect_pooling_groups(pool_wb_local)
+    pending = collect_pending_dilution_rows(pool_wb_local)
     a_lookup = build_a_table_c_lookup()
     external_lookup = build_external_lookup()
     self_hybrid, self_sample = build_self_lookup()
 
     from datetime import datetime
-    pcr_workbook = openpyxl.load_workbook(DST_PCR)
+    pcr_wb_local = pcr_wb if pcr_wb is not None else openpyxl.load_workbook(DST_PCR)
     base_title = datetime.now().strftime("%m%d")
-    pcr_workbook.worksheets[0].title = base_title
+    pcr_wb_local.worksheets[0].title = base_title
 
-    ws = pcr_workbook.worksheets[0]
+    ws = pcr_wb_local.worksheets[0]
     clear_pcr_targets(ws)
 
     for index, record in enumerate(pending):
@@ -324,8 +324,10 @@ def main():
         cell_g.border = THIN_BORDER
         ws.cell(row=r + 1, column=7).border = THIN_BORDER
 
-    pool_workbook.close()
-    pcr_workbook.save(DST_PCR)
+    if pool_wb is None:
+        pool_wb_local.close()
+    if pcr_wb is None:
+        pcr_wb_local.save(DST_PCR)
     print(f"  qPCR定量表: 写入{len(pending)}条, 子表格起始行={sub_start}")
     print(f"\n[DONE] 步骤九完成 -> {DST_PCR}")
 
