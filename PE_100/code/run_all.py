@@ -39,11 +39,13 @@ def main():
     pool_wb.close()
     print("[OK] 步骤1~5 完成")
     
-    # 格式化
-    fmt_main(pool_wb=None)  # format 有自己的格式逻辑
-    
-    # 下机数据统计
-    step6(pool_wb=None)  # step6 依赖格式化后的状态
+    # 格式化 + 下机数据统计（共享工作簿）
+    pool_wb = openpyxl.load_workbook(DST)
+    fmt_main(pool_wb=pool_wb)
+    step6(pool_wb=pool_wb)
+    pool_wb.save(DST)
+    pool_wb.close()
+    print("[OK] 格式化 + 下机数据统计 完成")
     
     # 校验
     validate(pool_wb=None)

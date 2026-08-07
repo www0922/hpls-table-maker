@@ -29,15 +29,10 @@ def main():
     step6(pool_wb=pool_wb)
     step7(pool_wb=pool_wb)
     step8(pool_wb=pool_wb)
+    step_stats(pool_wb=pool_wb)
     pool_wb.save(DST_POOL)
     pool_wb.close()
-    print("\n[OK] 步骤1~8 完成")
-
-    pool2 = openpyxl.load_workbook(DST_POOL)
-    step_stats(pool_wb=pool2)
-    pool2.save(DST_POOL)
-    pool2.close()
-    print("[OK] 下机数据统计模版 完成")
+    print("\n[OK] 步骤1~8 + 下机统计 完成")
 
     pool3 = openpyxl.load_workbook(DST_POOL)
     pcr_wb = openpyxl.load_workbook(DST_PCR)
