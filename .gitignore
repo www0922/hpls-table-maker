@@ -1,5 +1,10 @@
-# 输出目录（运行时生成）
-output_result/
+# 输出目录（运行时生成）— 保留空目录，忽略内容
+output_result/*
+!output_result/.gitkeep
+
+# 输入数据（敏感，不入库）— 保留空目录，忽略内容
+input_data/*
+!input_data/.gitkeep
 
 # Python 编译缓存
 __pycache__/
