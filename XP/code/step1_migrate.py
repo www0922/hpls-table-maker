@@ -189,15 +189,16 @@ def migrate_sheet(ws_src, ws_dst, name):
             cell.alignment = CENTER
 
 
-def main():
+def main(pool_wb=None):
     wb_src = openpyxl.load_workbook(SRC)
-    wb_dst = openpyxl.load_workbook(DST_POOL)
+    wb_dst = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST_POOL)
 
     for src_name, dst_name in SHEET_MAP:
         print(f'\n{"─"*50}\n处理: A表[{src_name}] -> Pooling[{dst_name}]')
         migrate_sheet(wb_src[src_name], wb_dst[dst_name], dst_name)
 
-    wb_dst.save(DST_POOL)
+    if pool_wb is None:
+        wb_dst.save(DST_POOL)
     print(f'\n{"="*50}\n[DONE] 步骤一完成 -> {DST_POOL}')
 
 

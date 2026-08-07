@@ -148,13 +148,14 @@ def process_sheet(ws, qpcr_lookup, name):
     print(f"  Sheet {name}: {len(lanes)}个lane, {group_count}组, 写入{written}行")
 
 
-def main():
+def main(pool_wb=None):
     qpcr_lookup = build_qpcr_lookup()
-    workbook = openpyxl.load_workbook(DST_POOL)
+    workbook = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST_POOL)
     for name in SHEETS:
         print(f"\n处理 [{name}]")
         process_sheet(workbook[name], qpcr_lookup, name)
-    workbook.save(DST_POOL)
+    if pool_wb is None:
+        workbook.save(DST_POOL)
     print(f"\n[DONE] 步骤二完成 -> {DST_POOL}")
 
 

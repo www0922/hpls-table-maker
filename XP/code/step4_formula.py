@@ -148,12 +148,13 @@ def process_sheet(ws, name):
     print(f"  Sheet {name}: {len(plan)}组, {singles_count}个拆分为单样本")
 
 
-def main():
-    workbook = openpyxl.load_workbook(DST_POOL)
+def main(pool_wb=None):
+    workbook = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST_POOL)
     for name in SHEETS:
         print(f"\n处理 [{name}]")
         process_sheet(workbook[name], name)
-    workbook.save(DST_POOL)
+    if pool_wb is None:
+        workbook.save(DST_POOL)
     print(f"\n[DONE] 步骤四完成 -> {DST_POOL}")
 
 

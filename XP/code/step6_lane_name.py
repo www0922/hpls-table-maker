@@ -88,12 +88,13 @@ def process_sheet(ws, face):
     print(f"  Sheet {face}: {len(groups)}组")
 
 
-def main():
-    workbook = openpyxl.load_workbook(DST_POOL)
+def main(pool_wb=None):
+    workbook = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST_POOL)
     for face in SHEETS:
         print(f"\n处理 [{face}]")
         process_sheet(workbook[face], face)
-    workbook.save(DST_POOL)
+    if pool_wb is None:
+        workbook.save(DST_POOL)
     print(f"\n[DONE] 步骤六完成 -> {DST_POOL}")
 
 

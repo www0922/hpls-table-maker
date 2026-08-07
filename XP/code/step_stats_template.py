@@ -65,8 +65,8 @@ def build_column_map(src_ws, dst_ws):
     return mapping
 
 
-def main():
-    workbook = openpyxl.load_workbook(DST_POOL)
+def main(pool_wb=None):
+    workbook = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST_POOL)
     src_ws = workbook[SRC_SHEET]
     dst_ws = workbook[DST_SHEET]
 
