@@ -33,6 +33,17 @@
 - 环境变量：`HPLS_INPUT_DIR`、`HPLS_OUTPUT_DIR`
 - 额外依赖：无项目级共享包依赖
 
+## 真迈
+
+- 项目目录：`{PROJECT_ROOT}/ZM`
+- 入口：`code/run_all.py`
+- 输入目录默认值：`input_data/`
+- 必需关键词：`江西上机`、`质检`、`自建库`、`纯化`、`qPCR`
+- 模板：`ZM_pooling表模板.xlsx`、`ZM_PCR定量表模板.xlsx`
+- 输出：`YYYYMMDD文库pooling表AE0.xlsx`、`YYYYMMDDPCR定量表真迈.xlsx`
+- 环境变量：`HPLS_INPUT_DIR`、`HPLS_OUTPUT_DIR`
+- 额外依赖：无项目级共享包依赖
+
 ## 执行约束
 
 - 每个关键词必须唯一匹配一个 `.xlsx` 文件。

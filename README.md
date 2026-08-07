@@ -25,7 +25,8 @@ cd hpls-table-maker
 |------|------|---------|
 | PE100 | `PE_100/input_data/` | 上机表、质检表、自建库表（各一个） |
 | PE150 | `PE_150/input_data/` | 上机表、质检表、自建库表（各一个） |
-| XP / 真迈 | `XP/input_data/` | 上机表、质检表、自建库表、纯化表、qPCR表（各一个） |
+| XP | `XP/input_data/` | Xplus上机表、质检表、自建库表、纯化表、qPCR表（各一个） |
+| 真迈 | `ZM/input_data/` | 江西上机表、质检表、自建库表、纯化表、qPCR表（各一个） |
 
 ### 3. 打开 WorkBuddy，说句话就行
 
