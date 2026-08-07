@@ -86,10 +86,10 @@ hpls-table-maker/
 
 | 型号 | 输出文件 |
 |------|---------|
-| PE100 | `output_result/YYYYMMDD文库pooling表T7+PE100.xlsx` |
-| PE150 | `output_result/YYYYMMDD文库pooling表T7+PE150.xlsx` |
-| XP | `output_result/YYYYMMDD文库pooling表.xlsx` + `PCR定量表.xlsx` |
-| 真迈 | `output_result/YYYYMMDD文库pooling表AE0.xlsx` + `PCR定量表真迈.xlsx` |
+| PE100 | `PE_100/output_result/YYYYMMDD文库pooling表T7+PE100.xlsx` |
+| PE150 | `PE_150/output_result/YYYYMMDD文库pooling表T7+PE150.xlsx` |
+| XP | `XP/output_result/YYYYMMDD文库pooling表.xlsx` + `YYYYMMDDPCR定量表.xlsx` |
+| 真迈 | `ZM/output_result/YYYYMMDD文库pooling表AE0.xlsx` + `YYYYMMDDPCR定量表真迈.xlsx` |
 
 ## 同步更新
 
