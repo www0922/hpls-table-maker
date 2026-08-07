@@ -71,8 +71,8 @@ def format_offline_stats(ws):
         ws.row_dimensions[row].height = 30
 
 
-def main():
-    wb = openpyxl.load_workbook(DST)
+def main(pool_wb=None):
+    wb = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST)
 
     apply_standard_format(
         wb,
@@ -97,7 +97,8 @@ def main():
     if '下机数据统计模版' in wb.sheetnames:
         format_offline_stats(wb['下机数据统计模版'])
 
-    wb.save(DST)
+    if pool_wb is None:
+        wb.save(DST)
     print(f'\n[DONE] 完成 -> {DST}')
 
 

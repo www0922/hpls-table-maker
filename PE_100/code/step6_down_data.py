@@ -221,8 +221,8 @@ def fill_down_data_sheet(wb, rows):
     print(f'  下机数据统计模版: {len(rows)} 行, {len(lane_groups)} 个 lane')
 
 
-def main():
-    wb = openpyxl.load_workbook(DST)
+def main(pool_wb=None):
+    wb = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST)
 
     rows = read_group_data(wb)
     total_libs = sum(r['count'] for r in rows)
@@ -233,7 +233,8 @@ def main():
     print(f'{"─"*50}')
     fill_down_data_sheet(wb, rows)
 
-    wb.save(DST)
+    if pool_wb is None:
+        wb.save(DST)
     print(f'\n{"="*50}')
     print(f'[DONE] 步骤六完成 -> {DST}')
 

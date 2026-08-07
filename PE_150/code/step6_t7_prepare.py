@@ -169,8 +169,8 @@ def fill_t7_sheet(ws_t7, hh_rows):
     print(f'  T7+制备: {len(groups)} 组, 共 {current_row - 2} 行')
 
 
-def main():
-    wb = openpyxl.load_workbook(DST)
+def main(pool_wb=None):
+    wb = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST)
 
     # 读取文库环化数据
     ws_hh = wb['文库环化']
@@ -198,7 +198,8 @@ def main():
     print(f'{"─"*50}')
     fill_t7_sheet(wb['T7+制备'], hh_rows)
 
-    wb.save(DST)
+    if pool_wb is None:
+        wb.save(DST)
     print(f'\n{"="*50}')
     print(f'[DONE] 步骤六完成 → {DST}')
 

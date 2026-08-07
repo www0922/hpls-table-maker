@@ -66,8 +66,8 @@ def build_lib_count_lookup(wb):
     return lookup
 
 
-def main():
-    wb = openpyxl.load_workbook(DST)
+def main(pool_wb=None):
+    wb = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST)
 
     ws_t7 = wb['T7+制备']
     ws_dst = wb['下机数据统计模版']
@@ -158,7 +158,8 @@ def main():
         ws_dst.cell(row=start, column=T_C).alignment = CENTER
         ws_dst.cell(row=start, column=T_K).alignment = CENTER
 
-    wb.save(DST)
+    if pool_wb is None:
+        wb.save(DST)
     print(f'  写入完成: {current_row - 2} 行')
     print(f'\n[DONE] 步骤七完成 → {DST}')
 

@@ -143,10 +143,10 @@ def migrate_sheet(ws_src, ws_dst, name):
             cell.alignment = CENTER
 
 
-def main():
+def main(pool_wb=None):
     sheet_map = sheet_map_a()
     wb_src = openpyxl.load_workbook(get_src_a(), data_only=True)  # data_only: 读缓存值而非公式, 避免外部引用污染
-    wb_dst = openpyxl.load_workbook(DST)
+    wb_dst = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST)
 
     # 动态同步sheet (根据A表)
     sync_b_table_sheets(wb_dst)
@@ -155,7 +155,8 @@ def main():
         print(f'\n{"─"*50}\n处理: A表[{src_name}] -> B表[{dst_name}面]')
         migrate_sheet(wb_src[src_name], wb_dst[dst_name], dst_name)
 
-    wb_dst.save(DST)
+    if pool_wb is None:
+        wb_dst.save(DST)
     print(f'\n{"="*50}\n[DONE] 步骤一完成 -> {DST}')
 
 

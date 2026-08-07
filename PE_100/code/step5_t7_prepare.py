@@ -240,8 +240,8 @@ def fill_t7_sheet(ws_t7, pool_data):
     print(f'  T7+制备: {len(groups)} 面, 共 {current_row - 2} 行')
 
 
-def main():
-    wb = openpyxl.load_workbook(DST)
+def main(pool_wb=None):
+    wb = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST)
     pool_data = read_pooling_data(wb)
     print(f'Pooling数据: {len(pool_data)} 组')
 
@@ -250,7 +250,8 @@ def main():
     print(f'{"─"*50}')
     fill_t7_sheet(wb['T7+制备'], pool_data)
 
-    wb.save(DST)
+    if pool_wb is None:
+        wb.save(DST)
     print(f'\n{"="*50}')
     print(f'[DONE] 步骤五完成 -> {DST}')
 

@@ -185,20 +185,21 @@ def write_cell(ws, row, col, value):
     cell.alignment = CENTER
 
 
-def main():
+def main(pool_wb=None):
     print('构建C表查找字典...')
     c_lookup = build_c_lookup(get_src_c())
 
     print('构建D表查找字典...')
     d_jj, d_yb = build_d_lookup(get_src_d())
 
-    wb_dst = openpyxl.load_workbook(DST)
+    wb_dst = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST)
 
     for name in get_target_sheets():
         print(f'\n处理工作表 [{name}]')
         fill_sheet(wb_dst[name], c_lookup, d_jj, d_yb, name)
 
-    wb_dst.save(DST)
+    if pool_wb is None:
+        wb_dst.save(DST)
     print(f'\n{"="*50}\n[DONE] 步骤二完成 -> {DST}')
 
 

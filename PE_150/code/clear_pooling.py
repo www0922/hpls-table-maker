@@ -13,13 +13,13 @@ from config import DST, prepare_output, sync_b_table_sheets, is_data_sheet
 import openpyxl
 
 
-def main():
+def main(pool_wb=None):
     # 确保模板已复制到 output_result (首次运行复制, 之后跳过)
     prepare_output()
 
     POOLING = DST
 
-    wb = openpyxl.load_workbook(POOLING)
+    wb = pool_wb if pool_wb is not None else openpyxl.load_workbook(POOLING)
 
     # ── 动态同步sheet (根据A表) ──
     print('同步B表sheet (根据A表)...')
@@ -39,7 +39,8 @@ def main():
 
         print(f'Sheet [{sn}]: 已清空')
 
-    wb.save(POOLING)
+    if pool_wb is None:
+        wb.save(POOLING)
     print(f'\n[DONE] 完成 -> {POOLING}')
 
 

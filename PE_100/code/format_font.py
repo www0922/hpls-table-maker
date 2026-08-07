@@ -12,8 +12,8 @@ from config import DST, get_target_sheets, is_data_sheet
 from common.format_utils import apply_standard_format
 
 
-def main():
-    wb = openpyxl.load_workbook(DST)
+def main(pool_wb=None):
+    wb = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST)
 
     apply_standard_format(
         wb,
@@ -24,7 +24,8 @@ def main():
         number_formats={'D': '0.00', 'E': '0.000', 'F': '0.000', 'H': '0.00', 'I': '0.000'},
     )
 
-    wb.save(DST)
+    if pool_wb is None:
+        wb.save(DST)
     print(f'\n[DONE] 完成 -> {DST}')
 
 

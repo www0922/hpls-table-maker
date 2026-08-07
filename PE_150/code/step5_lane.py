@@ -261,8 +261,8 @@ def fill_huanhua_sheet(ws_hh, all_lane_info):
     print(f'  文库环化: 写入 {len(all_lane_info)} 行')
 
 
-def main():
-    wb = openpyxl.load_workbook(DST)
+def main(pool_wb=None):
+    wb = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST)
 
     all_lane_info = []
 
@@ -278,7 +278,8 @@ def main():
     print(f'{"─"*50}')
     fill_huanhua_sheet(wb['文库环化'], all_lane_info)
 
-    wb.save(DST)
+    if pool_wb is None:
+        wb.save(DST)
     print(f'\n{"="*50}')
     print(f'[DONE] 步骤五完成 → {DST}')
 

@@ -67,14 +67,14 @@ def check_huanhua_sheet(ws, target_sheets, wb):
     return errors
 
 
-def main():
+def main(pool_wb=None):
     errors = []
     warnings = []
     total_groups = 0
 
     # ── 1. 打开输出文件 ──
     try:
-        wb = openpyxl.load_workbook(DST)
+        wb = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST)
     except Exception as e:
         print(f'[FAILED] 无法打开输出文件: {e}')
         raise SystemExit(1)
@@ -135,7 +135,8 @@ def main():
     order_errors = check_sheet_order(wb, expected_order)
     errors.extend(order_errors)
 
-    wb.close()
+    if pool_wb is None:
+        wb.close()
 
     # ── 6. 报告 ──
     print(f'\n校验统计: {len(target_sheets)} 个数据 sheet, 共 {total_groups} 组')

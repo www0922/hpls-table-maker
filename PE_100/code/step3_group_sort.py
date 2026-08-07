@@ -342,8 +342,8 @@ def process_sheet(ws, name):
     print(f'    写入完成: 共 {current_row - 2} 行 (含间隔和汇总行)')
 
 
-def main():
-    wb = openpyxl.load_workbook(DST)
+def main(pool_wb=None):
+    wb = pool_wb if pool_wb is not None else openpyxl.load_workbook(DST)
 
     for name in get_target_sheets():
         print(f'\n{"─"*50}')
@@ -351,7 +351,8 @@ def main():
         print(f'{"─"*50}')
         process_sheet(wb[name], name)
 
-    wb.save(DST)
+    if pool_wb is None:
+        wb.save(DST)
     print(f'\n{"="*50}')
     print(f'[DONE] 步骤三完成 -> {DST}')
 

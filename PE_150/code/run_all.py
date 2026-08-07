@@ -1,11 +1,13 @@
-"""PE150 Pooling 表全流程一键执行。"""
+"""PE150 Pooling 表全流程一键执行（优化版）。"""
 import sys
 from pathlib import Path
+import openpyxl
+
 _sys_path = str(Path(__file__).resolve().parent.parent.parent)
 if _sys_path not in sys.path:
     sys.path.insert(0, _sys_path)
 
-from common.step_runner import run_pipeline, StepError
+from config import DST
 
 from clear_pooling import main as clear_main
 from step1_migrate import main as step1
@@ -20,24 +22,29 @@ from validate_output import main as validate
 
 
 def main():
-    try:
-        run_pipeline(
-            [
-                ("清空模板",       clear_main),
-                ("数据迁移",       step1),
-                ("查找填充",       step2),
-                ("分组排序",       step3),
-                ("公式计算",       step4),
-                ("Lane编号",       step5),
-                ("T7+制备",        step6),
-                ("下机数据统计",   step7),
-                ("统一格式",       fmt_main),
-                ("输出校验",       validate),
-            ],
-            title="PE150 Pooling 全流程",
-        )
-    except StepError:
-        sys.exit(1)
+    import openpyxl
+    
+    # 步骤0: 清空模板
+    clear_main(pool_wb=None)
+    
+    # 步骤1~7 共享工作簿
+    pool_wb = openpyxl.load_workbook(DST)
+    step1(pool_wb=pool_wb)
+    step2(pool_wb=pool_wb)
+    step3(pool_wb=pool_wb)
+    step4(pool_wb=pool_wb)
+    step5(pool_wb=pool_wb)
+    step6(pool_wb=pool_wb)
+    step7(pool_wb=pool_wb)
+    pool_wb.save(DST)
+    pool_wb.close()
+    print("[OK] 步骤1~7 完成")
+    
+    # 格式化 + 校验
+    fmt_main(pool_wb=None)
+    validate(pool_wb=None)
+
+    print("\n[DONE] PE150 Pooling 全流程")
 
 
 if __name__ == '__main__':
