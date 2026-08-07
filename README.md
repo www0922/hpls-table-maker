@@ -32,11 +32,9 @@ cd hpls-table-maker
 
 ```
 帮我做 PE100 表
-帮我做真迈表
-```
-或
-```
+帮我做 PE150 表
 帮我做 XP 表
+帮我做真迈表
 ```
 
 Skill 会自动完成：
@@ -74,6 +72,7 @@ hpls-table-maker/
 │   └── output_result/       # 输出（自动生成，不提交 Git）
 ├── PE_150/                  # PE150 型（结构同上）
 ├── XP/                      # XP 型（结构同上，输出含 PCR 定量表）
+├── ZM/                      # 真迈型（结构同上，输出含 PCR 定量表）
 ├── common/                  # PE100/PE150 共享工具模块
 ├── .workbuddy/skills/
 │   └── hpls-table-maker/   # WorkBuddy 统一 Skill
@@ -90,6 +89,7 @@ hpls-table-maker/
 | PE100 | `output_result/YYYYMMDD文库pooling表T7+PE100.xlsx` |
 | PE150 | `output_result/YYYYMMDD文库pooling表T7+PE150.xlsx` |
 | XP | `output_result/YYYYMMDD文库pooling表.xlsx` + `PCR定量表.xlsx` |
+| 真迈 | `output_result/YYYYMMDD文库pooling表AE0.xlsx` + `PCR定量表真迈.xlsx` |
 
 ## 同步更新
 
