@@ -37,7 +37,7 @@ COL_M = 13   # ssDNA取样体积
 COL_N = 14   # 文库类型
 COL_O = 15   # 客户单位
 COL_P = 16   # TE补充体积
-COL_Q = 17   # 实际调整比例
+COL_Q = 17   # 实际调整比例 =L/I
 COL_R = 18   # 转换效率
 COL_S = 19   # 环化投入量
 
@@ -189,9 +189,9 @@ def fill_t7_sheet(ws_t7, pool_data):
             c.value = f'=F{current_row}/C{current_row}'
             c.alignment = CENTER
 
-            # Q列: =I*J
+            # Q列: =L/I
             c = ws_t7.cell(row=current_row, column=COL_Q)
-            c.value = f'=I{current_row}*J{current_row}'
+            c.value = f'=L{current_row}/I{current_row}'
             c.alignment = CENTER
 
             # R列: =22*C/S (模板公式, 转换效率)
