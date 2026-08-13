@@ -48,6 +48,17 @@ def find_file(directory, keyword, *, exclude_temp=True, unique=True):
     return str(matches[0])
 
 
+def ensure_gitignore(output_dir):
+    """确保输出目录中存在 .gitignore（防止 rm -rf 清掉后误提交结果表）。
+
+    Args:
+        output_dir: 输出目录 (Path 或 str)
+    """
+    gi = Path(output_dir) / '.gitignore'
+    if not gi.exists():
+        gi.write_text('*\n!.gitignore\n', encoding='utf-8')
+
+
 def prepare_output(output_dir, template_path, output_name):
     """复制模板到输出目录（已存在则跳过，保留已有工作）。
 
@@ -61,6 +72,7 @@ def prepare_output(output_dir, template_path, output_name):
     """
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    ensure_gitignore(output_dir)
     dst_path = output_dir / output_name
     if not dst_path.exists():
         shutil.copy2(template_path, dst_path)
@@ -83,6 +95,7 @@ def reset_output(output_dir, template_path, output_name):
     """
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    ensure_gitignore(output_dir)
     dst_path = output_dir / output_name
     shutil.copy2(template_path, dst_path)
     print(f'[OK] 已重置模板 -> {dst_path}')

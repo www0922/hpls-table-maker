@@ -31,9 +31,17 @@ DST_POOL = str(OUTPUT_DIR / f'{_date_str}文库pooling表.xlsx')
 DST_PCR = str(OUTPUT_DIR / f'{_date_str}PCR定量表.xlsx')
 
 
+def ensure_gitignore():
+    """确保输出目录中存在 .gitignore（防止 rm -rf 清掉后误提交结果表）。"""
+    gi = OUTPUT_DIR / '.gitignore'
+    if not gi.exists():
+        gi.write_text('*\n!.gitignore\n', encoding='utf-8')
+
+
 def prepare_output():
     """复制模板到 output_result/"""
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_gitignore()
     for tmpl, dst in [(TEMPLATE_POOL, DST_POOL), (TEMPLATE_PCR, DST_PCR)]:
         if not Path(dst).exists():
             shutil.copy2(tmpl, dst)
@@ -46,6 +54,7 @@ def prepare_output():
 def reset_output():
     """强制重新复制"""
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_gitignore()
     for tmpl, dst in [(TEMPLATE_POOL, DST_POOL), (TEMPLATE_PCR, DST_PCR)]:
         shutil.copy2(tmpl, dst)
         print(f'[OK] 已重置 -> {dst}')
