@@ -5,6 +5,8 @@ import unittest
 
 import pdfplumber
 from pypdf import PdfReader
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.pdfgen import canvas
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -13,7 +15,32 @@ sys.path.insert(0, str(ROOT / "tools"))
 import build_hpls_leadership_pdf as report
 
 
+def image_xobject_count(page):
+    resources = page.get('/Resources') or {}
+    xobjects = resources.get('/XObject') or {}
+    return sum(
+        1
+        for reference in xobjects.values()
+        if reference.get_object().get('/Subtype') == '/Image'
+    )
+
+
 class LeadershipPdfContractTests(unittest.TestCase):
+    def test_precheck_evidence_page_contains_image_and_management_conclusions(self):
+        output = ROOT / "tmp" / "pdfs" / "hpls_leadership" / "precheck-evidence.pdf"
+        report.register_fonts()
+        document = canvas.Canvas(str(output), pagesize=landscape(A4), pageCompression=1)
+        report.draw_evidence_precheck(document)
+        document.showPage()
+        document.save()
+
+        reader = PdfReader(str(output))
+        page = reader.pages[0]
+        text = page.extract_text() or ""
+        for required in ["输入预检与失败保护", "缺文件即停止", "问题可定位", "修复可执行"]:
+            self.assertIn(required, text)
+        self.assertGreaterEqual(image_xobject_count(page), 1)
+
     def test_evidence_assets_are_stable_and_missing_assets_fail_clearly(self):
         self.assertEqual(
             {key: path.name for key, path in report.EVIDENCE_ASSETS.items()},

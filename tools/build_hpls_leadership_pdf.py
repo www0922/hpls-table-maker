@@ -8,6 +8,7 @@ from pathlib import Path
 
 from reportlab.lib.colors import HexColor, white
 from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
@@ -107,6 +108,25 @@ def draw_rounded_box(c, x, y, w, h, fill, stroke=None, radius=4):
         c.setLineWidth(0)
     c.roundRect(x, y, w, h, radius, fill=1, stroke=1 if stroke else 0)
     c.restoreState()
+
+
+def draw_contained_image(c, image_path, x, y, width, height, background=INK):
+    image = ImageReader(str(image_path))
+    image_width, image_height = image.getSize()
+    scale = min(width / image_width, height / image_height)
+    draw_width = image_width * scale
+    draw_height = image_height * scale
+    draw_rounded_box(c, x, y, width, height, background, radius=3)
+    c.drawImage(
+        image,
+        x + (width - draw_width) / 2,
+        y + (height - draw_height) / 2,
+        draw_width,
+        draw_height,
+        preserveAspectRatio=True,
+        anchor="c",
+        mask="auto",
+    )
 
 
 def _wrap_text(text, font, size, width):
@@ -633,6 +653,40 @@ def draw_reuse(c):
         if idx < 4:
             draw_arrow(c, x + step_w + 4, 103, x + step_w + path_gap - 4, 103, TEAL)
     draw_footer(c, 7)
+
+
+def draw_evidence_precheck(c):
+    draw_header(c, "MEASURED EVIDENCE", "输入预检与失败保护", 8)
+    margin = 38
+    draw_text(
+        c,
+        "缺文件即停止，并把问题翻译成可执行的补救步骤",
+        margin,
+        490,
+        590,
+        FONT_BOLD,
+        17,
+        CHARCOAL,
+        max_lines=1,
+    )
+    image_x, image_y, image_w, image_h = margin, 86, 565, 359
+    draw_contained_image(c, EVIDENCE_ASSETS["precheck"], image_x, image_y, image_w, image_h)
+    card_x = image_x + image_w + 14
+    card_w = PAGE_WIDTH - margin - card_x
+    cards = [
+        (338, "缺文件即停止", "系统不猜测、不带错运行。", LIGHT_ORANGE, ORANGE),
+        (220, "问题可定位", "明确指出缺少的 3 类文件。", LIGHT_GREEN, DEEP_TEAL),
+        (102, "修复可执行", "直接给出目录与下一步操作。", LIGHT_GRAY, TEAL),
+    ]
+    for y, title, body, fill, accent in cards:
+        draw_rounded_box(c, card_x, y, card_w, 100, fill)
+        c.saveState()
+        c.setFillColor(_color(accent))
+        c.rect(card_x, y, 4, 100, fill=1, stroke=0)
+        c.restoreState()
+        draw_text(c, title, card_x + 14, y + 74, card_w - 28, FONT_BOLD, 12, CHARCOAL, max_lines=1)
+        draw_text(c, body, card_x + 14, y + 48, card_w - 28, size=10, color=TEXT_GRAY, max_lines=3)
+    draw_footer(c, 8)
 
 
 PAGE_RENDERERS = [
