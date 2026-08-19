@@ -77,14 +77,12 @@ def validate_pooling(workbook):
             has_w_b = any(contains_b_marker(ws.cell(row=row, column=23).value) for row in rows)
             pure = has_u or has_w_b
             status = normalized(ws.cell(row=first, column=7).value)
-            # U+P都有 → 已定量(最高优先)
-            if has_u and p_rows:
+            # 单文库组 + P列有值 → 已定量（无条件最高优先）
+            if len(rows) == 1 and p_rows:
                 if status != "已定量":
-                    errors.append(f"{face}!{first}: U+P同时存在应标记已定量但G列为{status!r}")
+                    errors.append(f"{face}!{first}: 单文库组已定量应标记已定量但G列为{status!r}")
             elif pure and status != "纯化":
                 errors.append(f"{face}!{first}: 应标记纯化但G列为{status!r}")
-            if not pure and len(rows) == 1 and p_rows and status != "已定量":
-                errors.append(f"{face}!{first}: 应标记已定量但G列为{status!r}")
 
             if group["summary_row"] is None:
                 continue

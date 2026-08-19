@@ -1,11 +1,11 @@
 """步骤七：标记“纯化”和“已定量”。
 
-优先级：U+P时已定量优先 → 纯化 → 单文库已定量。
+优先级：单文库组已定量（最高）→ 纯化。
 
+* 单文库组 P 列已有 qPCR 结果：G 列写“已定量”（无条件优先，即使同时纯化过）；
 * 任一数据行 U 列含“纯化”，或 W 列人工备注出现独立标记 B：
   组内第一行 G 列写“纯化”；
-* 单文库组 P 列已有 qPCR 结果：G 列写“已定量”；
-* 多文库组不再无条件标记“已定量”。
+* 多文库组不标记“已定量”。
 """
 
 from __future__ import annotations
@@ -47,16 +47,13 @@ def process_sheet(ws, name):
         )
 
         status = None
-        # U+P都有 → 已定量 (最高优先)
-        if has_u and has_p:
+        # 单文库组 + P列有值 → 已定量（无条件最高优先）
+        if len(data_rows) == 1 and has_p:
             status = "已定量"
             quantified_count += 1
         elif needs_purification:
             status = "纯化"
             pure_count += 1
-        elif len(data_rows) == 1 and has_p:
-            status = "已定量"
-            quantified_count += 1
 
         if status:
             cell = ws.cell(row=first_row, column=COL_G)
