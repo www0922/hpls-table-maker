@@ -689,6 +689,28 @@ def draw_evidence_precheck(c):
     draw_footer(c, 8)
 
 
+def draw_evidence_success(c):
+    draw_header(c, 'MEASURED EVIDENCE', '成功交付与人工复核闭环', 9)
+    margin = 38
+    draw_text(c, '机器完成确定性任务，异常判断与质量责任回到人', margin, 490, 600, FONT_BOLD, 17, CHARCOAL, max_lines=1)
+    draw_contained_image(c, EVIDENCE_ASSETS['success'], margin, 86, 523, 359)
+    side_x = margin + 537
+    side_w = PAGE_WIDTH - margin - side_x
+    draw_contained_image(c, EVIDENCE_ASSETS['review'], side_x, 327, side_w, 118)
+    draw_rounded_box(c, side_x, 86, side_w, 225, INK)
+    draw_section_label(c, 'HUMAN REVIEW', side_x+16, 286, AMBER)
+    draw_text(c, '17 项', side_x+16, 264, side_w-32, FONT_BOLD, 28, '#45C4AE', max_lines=1)
+    draw_text(c, '异常记录回到人工复核', side_x+16, 218, side_w-32, FONT_BOLD, 11, WHITE, max_lines=2)
+    metric_w = (side_w - 42) / 2
+    first_x = side_x + 16
+    second_x = first_x + metric_w + 10
+    draw_rounded_box(c, first_x, 118, metric_w, 54, '#303B45', '#4A5661', radius=3)
+    draw_rounded_box(c, second_x, 118, metric_w, 54, '#303B45', '#4A5661', radius=3)
+    draw_centered_text(c, 'A 面 8 项', first_x + metric_w/2, 138, FONT_BOLD, 10, WHITE)
+    draw_centered_text(c, 'B 面 9 项', second_x + metric_w/2, 138, FONT_BOLD, 10, WHITE)
+    draw_footer(c, 9)
+
+
 PAGE_RENDERERS = [
     draw_cover,
     draw_executive_summary,

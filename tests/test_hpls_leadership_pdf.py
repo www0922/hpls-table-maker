@@ -42,6 +42,22 @@ class LeadershipPdfContractTests(unittest.TestCase):
             self.assertIn(required, text)
         self.assertGreaterEqual(image_xobject_count(page), 1)
 
+    def test_success_evidence_page_contains_two_images_and_review_metrics(self):
+        output = ROOT / "tmp" / "pdfs" / "hpls_leadership" / "success-evidence.pdf"
+        output.parent.mkdir(parents=True, exist_ok=True)
+        report.register_fonts()
+        document = canvas.Canvas(str(output), pagesize=landscape(A4), pageCompression=1)
+        report.draw_evidence_success(document)
+        document.showPage()
+        document.save()
+
+        reader = PdfReader(str(output))
+        page = reader.pages[0]
+        text = page.extract_text() or ""
+        for required in ["成功交付与人工复核闭环", "17 项", "A 面 8 项", "B 面 9 项"]:
+            self.assertIn(required, text)
+        self.assertGreaterEqual(image_xobject_count(page), 2)
+
     def test_evidence_assets_are_stable_and_missing_assets_fail_clearly(self):
         self.assertEqual(
             {key: path.name for key, path in report.EVIDENCE_ASSETS.items()},
