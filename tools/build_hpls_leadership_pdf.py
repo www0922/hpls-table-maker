@@ -61,7 +61,8 @@ SOLUTION_STAGES = [
 def validate_evidence_assets(assets=None):
     """Ensure all report evidence assets are present before PDF generation."""
     assets = EVIDENCE_ASSETS if assets is None else assets
-    missing = [path for path in assets.values() if not path.is_file()]
+    normalized_assets = {key: Path(path) for key, path in assets.items()}
+    missing = [path for path in normalized_assets.values() if not path.is_file()]
     if missing:
         raise FileNotFoundError(
             "Missing evidence assets: " + ", ".join(str(path) for path in missing)

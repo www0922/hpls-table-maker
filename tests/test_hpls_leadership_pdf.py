@@ -30,6 +30,10 @@ class LeadershipPdfContractTests(unittest.TestCase):
             missing = Path(temp_dir) / "missing-evidence.png"
             with self.assertRaisesRegex(FileNotFoundError, "missing-evidence\\.png"):
                 report.validate_evidence_assets({"missing": missing})
+            with self.assertRaisesRegex(FileNotFoundError, "missing-string-evidence\\.png"):
+                report.validate_evidence_assets(
+                    {"missing": str(Path(temp_dir) / "missing-string-evidence.png")}
+                )
 
     def test_measured_metrics_use_interval_midpoints(self):
         metrics = report.compute_metrics()
