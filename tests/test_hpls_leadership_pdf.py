@@ -28,6 +28,7 @@ def image_xobject_count(page):
 class LeadershipPdfContractTests(unittest.TestCase):
     def test_precheck_evidence_page_contains_image_and_management_conclusions(self):
         output = ROOT / "tmp" / "pdfs" / "hpls_leadership" / "precheck-evidence.pdf"
+        output.parent.mkdir(parents=True, exist_ok=True)
         report.register_fonts()
         document = canvas.Canvas(str(output), pagesize=landscape(A4), pageCompression=1)
         report.draw_evidence_precheck(document)
