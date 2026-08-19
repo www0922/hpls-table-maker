@@ -14,7 +14,17 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 
-PAGE_TITLES = ["封面", "成果摘要", "业务痛点", "方案设计", "人机分工", "量化成效", "复用方案"]
+PAGE_TITLES = [
+    "封面",
+    "成果摘要",
+    "业务痛点",
+    "方案设计",
+    "人机分工",
+    "量化成效",
+    "复用方案",
+    "输入预检与失败保护",
+    "成功交付与人工复核闭环",
+]
 GUARDRAILS = ["输入契约", "失败即中止", "输出规则校验", "源表与原模板不改动"]
 PAGE_WIDTH, PAGE_HEIGHT = landscape(A4)
 
@@ -227,7 +237,7 @@ def draw_footer(c, page_number):
     c.drawString(38, y, "HPLS AUTOMATION")
     c.setFont(FONT_REGULAR, 7.5)
     c.drawCentredString(PAGE_WIDTH / 2, y, "成果汇报 · 2026.08")
-    c.drawRightString(PAGE_WIDTH - 38, y, f"{page_number} / 07")
+    c.drawRightString(PAGE_WIDTH - 38, y, f"{page_number} / {len(PAGE_RENDERERS):02d}")
     c.restoreState()
 
 
@@ -719,10 +729,13 @@ PAGE_RENDERERS = [
     draw_human_machine,
     draw_impact,
     draw_reuse,
+    draw_evidence_precheck,
+    draw_evidence_success,
 ]
 
 
 def build_pdf(output_path):
+    validate_evidence_assets()
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     register_fonts()

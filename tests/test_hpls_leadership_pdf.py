@@ -86,10 +86,20 @@ class LeadershipPdfContractTests(unittest.TestCase):
         self.assertEqual(metrics["minutes_saved"], 88.5)
         self.assertAlmostEqual(metrics["time_reduction_percent"], 98.33, places=2)
 
-    def test_page_contract_matches_approved_seven_sections(self):
+    def test_page_contract_matches_approved_nine_sections(self):
         self.assertEqual(
             report.PAGE_TITLES,
-            ["封面", "成果摘要", "业务痛点", "方案设计", "人机分工", "量化成效", "复用方案"],
+            [
+                "封面",
+                "成果摘要",
+                "业务痛点",
+                "方案设计",
+                "人机分工",
+                "量化成效",
+                "复用方案",
+                "输入预检与失败保护",
+                "成功交付与人工复核闭环",
+            ],
         )
 
     def test_solution_page_has_four_protection_mechanisms(self):
@@ -134,12 +144,12 @@ class LeadershipPdfContractTests(unittest.TestCase):
 
         self.assertAlmostEqual(label["bottom"], duration["bottom"], delta=0.5)
 
-    def test_generated_pdf_has_seven_pages_and_required_content(self):
+    def test_generated_pdf_has_nine_pages_and_required_content(self):
         output = ROOT / "tmp" / "pdfs" / "hpls_leadership" / "contract.pdf"
         report.build_pdf(output)
 
         reader = PdfReader(str(output))
-        self.assertEqual(len(reader.pages), 7)
+        self.assertEqual(len(reader.pages), 9)
         text = "\n".join(page.extract_text() or "" for page in reader.pages)
         for required in [
             "业务痛点",
@@ -149,8 +159,13 @@ class LeadershipPdfContractTests(unittest.TestCase):
             "复用方案",
             "约 98%",
             "88.5 分钟",
+            "输入预检与失败保护",
+            "成功交付与人工复核闭环",
+            "17 项",
         ]:
             self.assertIn(required, text)
+        for page_number, page in enumerate(reader.pages[1:], start=2):
+            self.assertIn(f"{page_number} / 09", page.extract_text() or "")
 
 
 if __name__ == "__main__":
