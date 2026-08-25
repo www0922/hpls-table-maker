@@ -38,13 +38,25 @@
   - 因此：XP/ZM 表结构为 数据行(N)+汇总行+空白行、单文库组为 数据行(1)+空白行；
     PE100/PE150 为 数据行(N)+汇总行，紧接下一组
   - ⚠️ **XP/ZM 的空白行不能手工删除**：删了会导致连续的单文库组被误并成一个多文库组
-  - **空白行的真正生成位置 = `step4_formula.py` 第 122-123 行**（不是 step2！）：
-    `if gi > 0: current_row += 1  # 组间空行` → **每组之间**都插一行
-    - step2_group_sort 的 `write_lane_groups` 虽然也插空行，但只在 **lane 之间**；
-      而 step4 会 `delete_rows(2, max_row-1)` 清空并重写整个 sheet，**step2 的布局是中间产物、会被覆盖**
+- **输出表对比方法（验证改动无害时必用）**
+  - 公式含行号，结构一变必然不同 → 必须先归一化：`re.sub(r'([A-Z]{1,2})\d+', r'\1#', formula)`
+  - 否则会看到大量**假性 MISMATCH**（G 列组浓度公式、汇总行 SUM 公式等）
+  - PCR 定量表的 sheet 名按日期命名（如 `0819` / `0825`）→ 必须**按索引**而非名称对比
+  - 正确做法：按组归集（跳空行、汇总行判定）后比「组数 / 组类型 / 数据行 / 汇总行」四项
+  - **空白行的真正生成位置 = `step4_formula.py`**（不是 step2！）
+    - step2_group_sort 的 `write_lane_groups` 只在 **lane 之间**插空行，但 step4 会
+      `delete_rows(2, max_row-1)` 清空并重写整个 sheet → **step2 的布局是中间产物、会被覆盖**
     - step4 的 plan 排序：`(int(laneID), len(rows)==1)` → 按 lane 升序，同 lane 内多文库组在前、单文库组在后
+    - `is_single=True` 时 rows 必定只有 1 行 → **「无汇总行的组」⟺ `len(rows) == 1`**
+  - **2026-08-25 已改为「仅单文库组后留空行」**（XP/ZM 同步）：
+    多文库组靠汇总行收尾不留空行；单文库组后留一空行；lane 切换不额外留；末组不留（`flush_single_tail` 兜底）
+    → 行数省 8~11%，业务数据零差异
   - 下游解耦良好：step5/6/7/8/step_stats/step9/validate **全部通过 `read_groups` 读结构**（各调用 2 次），
     仅 `format_font` 按行遍历（不关心分组）→ 改行结构策略时下游会自动适配
+  - `get_target_sheets()` 只返回**单个大写 ASCII 字母**的 sheet（XP=A/B，ZM=S/P）→ step1~step8 只处理数据面
+  - 实测四个 sheet（数据面 + 文库稀释计算表 + 下机数据统计模版）**跨 sheet 引用数 = 0**
+    → 稀释表/下机表/PCR 表都是独立填充的静态值或自身内部公式，**不依赖数据面行号**
+    → 这是改动数据面行结构安全的根本原因
 
 ## Git 约定
 - 远程已切换 SSH（`git@github.com:www0922/hpls-table-maker.git`），推送免密

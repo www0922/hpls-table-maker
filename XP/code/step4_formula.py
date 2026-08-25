@@ -119,9 +119,6 @@ def process_sheet(ws, name):
     current_row = 2
 
     for gi, (is_single, rows, mm, summary_row) in enumerate(plan):
-        if gi > 0:
-            current_row += 1  # 组间空行
-
         d_sum = 0
         for r in rows:
             sn = snapshots[r]
@@ -137,12 +134,16 @@ def process_sheet(ws, name):
             d_sum += safe_float(sn.get(COL_D))
             current_row += 1
 
-        # 多文库组写汇总行
+        # 多文库组写汇总行（汇总行即组尾标记，无需空行）
         if not is_single and len(rows) > 1:
             ws.cell(row=current_row, column=2).value = str(len(rows))
             ws.cell(row=current_row, column=2).alignment = CENTER
             ws.cell(row=current_row, column=4).value = d_sum
             ws.cell(row=current_row, column=4).alignment = CENTER
+            current_row += 1
+        elif gi < len(plan) - 1:
+            # 单文库组无汇总行，必须靠空行界定组尾（read_groups 分支①）；
+            # 末组由 flush_single_tail 兜底，不留尾部空行。
             current_row += 1
 
     print(f"  Sheet {name}: {len(plan)}组, {singles_count}个拆分为单样本")
