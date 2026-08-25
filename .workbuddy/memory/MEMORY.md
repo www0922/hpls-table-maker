@@ -28,11 +28,16 @@
   2. 纯化过（U列"纯化"或 W列有B标记）→ 标「纯化」
   - 多文库组**不标「已定量」**（P列有值只发生在单文库组，多文库出现 P 值属异常）
 - PE100/PE150 T7+制备表 Q 列公式已改为 `=L/I`
-- **XP/ZM pooling 表行结构（重要，勿删空白行）**：每组 = 数据行(N) + 汇总行(1) + **空白行(1)**
-  - 单文库组无汇总行，即 数据行(1) + 空白行(1)
-  - 空白行是**结构性分组分隔符**：`pooling_utils.read_groups` 遇 `is_blank_business_row`
-    （A~W 全为 None）即 flush 当前组，后续 step5_summary / step7_mark 等全靠它识别组边界
-  - XP 与 ZM 的 `pooling_utils.py` 内容完全一致，规则通用
+- **pooling 表分组机制（四项目通用，重要）**
+  - 判定条件完全一致：`is_summary_row` = B 列为纯数字 且 D 列有值；`is_blank_row` = 业务列全 None
+  - `read_groups` 三条分支（XP/ZM 的 pooling_utils 与 PE100/PE150 的 common/validate_utils 逻辑同构）：
+    ① 空白行 → 把 pending 里的行各自当作单文库组 flush；② 汇总行 → pending 收成一个多文库组；③ B 列有值 → 累积进 pending
+  - **关键差异：单文库组是否生成汇总行**
+    - PE100/PE150：**单文库组也生成汇总行**（B=1），所以每组都有汇总行收尾 → **不需要空白行**
+    - XP/ZM：**单文库组不生成汇总行**（`is_summary_row` 注释即"识别多文库组汇总行"）→ **必须靠空白行**界定组尾
+  - 因此：XP/ZM 表结构为 数据行(N)+汇总行+空白行、单文库组为 数据行(1)+空白行；
+    PE100/PE150 为 数据行(N)+汇总行，紧接下一组
+  - ⚠️ **XP/ZM 的空白行不能手工删除**：删了会导致连续的单文库组被误并成一个多文库组
 
 ## Git 约定
 - 远程已切换 SSH（`git@github.com:www0922/hpls-table-maker.git`），推送免密
