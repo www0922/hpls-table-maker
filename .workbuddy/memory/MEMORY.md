@@ -28,6 +28,11 @@
   2. 纯化过（U列"纯化"或 W列有B标记）→ 标「纯化」
   - 多文库组**不标「已定量」**（P列有值只发生在单文库组，多文库出现 P 值属异常）
 - PE100/PE150 T7+制备表 Q 列公式已改为 `=L/I`
+- **XP/ZM pooling 表行结构（重要，勿删空白行）**：每组 = 数据行(N) + 汇总行(1) + **空白行(1)**
+  - 单文库组无汇总行，即 数据行(1) + 空白行(1)
+  - 空白行是**结构性分组分隔符**：`pooling_utils.read_groups` 遇 `is_blank_business_row`
+    （A~W 全为 None）即 flush 当前组，后续 step5_summary / step7_mark 等全靠它识别组边界
+  - XP 与 ZM 的 `pooling_utils.py` 内容完全一致，规则通用
 
 ## Git 约定
 - 远程已切换 SSH（`git@github.com:www0922/hpls-table-maker.git`），推送免密
