@@ -38,6 +38,13 @@
   - 因此：XP/ZM 表结构为 数据行(N)+汇总行+空白行、单文库组为 数据行(1)+空白行；
     PE100/PE150 为 数据行(N)+汇总行，紧接下一组
   - ⚠️ **XP/ZM 的空白行不能手工删除**：删了会导致连续的单文库组被误并成一个多文库组
+  - **空白行的真正生成位置 = `step4_formula.py` 第 122-123 行**（不是 step2！）：
+    `if gi > 0: current_row += 1  # 组间空行` → **每组之间**都插一行
+    - step2_group_sort 的 `write_lane_groups` 虽然也插空行，但只在 **lane 之间**；
+      而 step4 会 `delete_rows(2, max_row-1)` 清空并重写整个 sheet，**step2 的布局是中间产物、会被覆盖**
+    - step4 的 plan 排序：`(int(laneID), len(rows)==1)` → 按 lane 升序，同 lane 内多文库组在前、单文库组在后
+  - 下游解耦良好：step5/6/7/8/step_stats/step9/validate **全部通过 `read_groups` 读结构**（各调用 2 次），
+    仅 `format_font` 按行遍历（不关心分组）→ 改行结构策略时下游会自动适配
 
 ## Git 约定
 - 远程已切换 SSH（`git@github.com:www0922/hpls-table-maker.git`），推送免密
