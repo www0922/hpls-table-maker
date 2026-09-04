@@ -82,7 +82,7 @@ def collect_pooling_groups(workbook):
                 n_val = safe_float(n_raw, default=None)
             result[sample_id] = {
                 "o": ws.cell(row=first, column=15).value,
-                "k": ws.cell(row=first, column=11).value,
+                "k": ws.cell(row=first, column=10).value,
                 "m": m_val,
                 "n": n_val,
                 "data_amount": sum(

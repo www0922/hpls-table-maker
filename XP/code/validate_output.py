@@ -64,7 +64,7 @@ def validate_pooling(workbook):
                     errors.append(f"{face}!{first}: 组名未使用face+laneID")
 
             fragments = [
-                safe_float(ws.cell(row=row, column=11).value, default=None)
+                safe_float(ws.cell(row=row, column=10).value, default=None)
                 for row in rows
             ]
             fragments = [value for value in fragments if value is not None and value > 0]

@@ -64,7 +64,7 @@ def validate_pooling(workbook):
                     errors.append(f"{face}!{first}: 组名未使用face+laneID")
 
             fragments = [
-                safe_float(ws.cell(row=row, column=11).value, default=None)
+                safe_float(ws.cell(row=row, column=10).value, default=None)
                 for row in rows
             ]
             fragments = [value for value in fragments if value is not None and value > 0]
@@ -106,24 +106,29 @@ def validate_pooling(workbook):
 def validate_downstream(pool_workbook):
     errors = []
     dilution = pool_workbook['文库稀释计算表']
-    dilution_rows = {}
+    dilution_rows = []  # (sample_id, status)，含重复：同一文库上多个 lane 各占一条
+    quantified_ids = set()
     for row in range(3, dilution.max_row + 1):
         sample_id = normalized(dilution.cell(row=row, column=2).value)
         if sample_id:
-            dilution_rows[sample_id] = normalized(dilution.cell(row=row, column=1).value)
+            status = normalized(dilution.cell(row=row, column=1).value)
+            dilution_rows.append((sample_id, status))
+            if status == "已定量":
+                quantified_ids.add(sample_id)
 
     pcr_workbook = openpyxl.load_workbook(DST_PCR, data_only=False)
     pcr_ids = []
     for ws in pcr_workbook.worksheets:
-        for row in range(8, 47):
+        # ZM 连续结构：主表从第 6 行写起，读到 sheet 末尾（子表格 B 列为空，不会误读）
+        for row in range(6, ws.max_row + 1):
             sample_id = normalized(ws.cell(row=row, column=2).value)
             if sample_id:
                 pcr_ids.append(sample_id)
-                if dilution_rows.get(sample_id) == "已定量":
+                if sample_id in quantified_ids:
                     errors.append(f"{ws.title}!{row}: 已定量记录仍进入qPCR表")
     pcr_workbook.close()
 
-    expected = sum(1 for status in dilution_rows.values() if status != "已定量")
+    expected = sum(1 for _sample_id, status in dilution_rows if status != "已定量")
     if len(pcr_ids) != expected:
         errors.append(f"qPCR写入{len(pcr_ids)}条，预期{expected}条")
     return len(dilution_rows), len(pcr_ids), errors

@@ -28,7 +28,7 @@ COL_D = 4
 COL_E = 5
 COL_F = 6
 COL_G = 7
-COL_K = 11
+COL_J = 10  # 片段（原 K 列，迁至 J 列）
 COL_M = 13
 COL_N = 14
 COL_O = 15
@@ -86,7 +86,7 @@ def process_sheet(ws, name):
         last_row = data_rows[-1]
 
         fragment_values = [
-            safe_float(ws.cell(row=row, column=COL_K).value, default=None)
+            safe_float(ws.cell(row=row, column=COL_J).value, default=None)
             for row in data_rows
         ]
         fragment_values = [value for value in fragment_values if value is not None and value > 0]

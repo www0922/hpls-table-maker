@@ -22,9 +22,9 @@ from config import get_target_sheets
 SHEETS = get_target_sheets()
 
 P_C = 3
-P_G = 7
 P_I = 9
-P_K = 11
+P_J = 10  # 片段（原 K 列，迁至 J 列）
+P_K = 11  # 孔号
 P_L = 12
 P_P = 16
 P_Q = 17
@@ -132,7 +132,7 @@ def fill_sheet(
                 concentration = record["conc_p"] if has_value(record["frag"]) else record["conc_l"]
                 write_value(ws, row, P_C, concentration)
                 write_value(ws, row, P_I, concentration)
-                write_value(ws, row, P_K, record["frag"])
+                write_value(ws, row, P_J, record["frag"])
                 write_value(ws, row, P_L, record["plate"])
                 write_value(ws, row, P_V, record["detection"])
                 write_value(ws, row, P_W, record["manual_remark"])
@@ -144,9 +144,9 @@ def fill_sheet(
             if record:
                 write_value(ws, row, P_C, record["qubit"])
                 # K/M 列冲突尚未确认：片段保留在 K，M 专用于组浓度。
-                write_value(ws, row, P_K, record["frag"])
+                write_value(ws, row, P_J, record["frag"])
                 write_value(ws, row, P_L, record["evaluation"])
-                write_value(ws, row, P_G, record["well"])
+                write_value(ws, row, P_K, record["well"])
                 if has_value(record["plate"]):
                     write_value(ws, row, P_L, record["plate"])
                 matched += 1

@@ -10,7 +10,7 @@ from __future__ import annotations
 from collections import Counter, defaultdict
 
 import openpyxl
-from openpyxl.styles import Border, Side
+from openpyxl.styles import Border, Side, PatternFill
 
 from config import DST_POOL
 from pooling_utils import CENTER, POOL_MAX_COL, normalized, read_groups, safe_float
@@ -21,6 +21,7 @@ SHEETS = get_target_sheets()
 COL_A = 1
 COL_B = 2
 COL_D = 4
+COL_L = 12
 COL_T = 20
 
 ALL_BORDER = Border(
@@ -35,6 +36,37 @@ def format_amount(value):
     if float(value).is_integer():
         return str(int(value))
     return f"{value:.3f}".rstrip("0").rstrip(".")
+
+
+def _alt_fill_plate(ws, data_rows):
+    """板号交替填充：同一组内不同板号前缀交替浅蓝（L列）。"""
+    blue = PatternFill(start_color="FFADD8E6", end_color="FFADD8E6", fill_type="solid")
+
+    def prefix_of(plate):
+        if "_" in plate:
+            return plate.split("_")[0]
+        if "-" in plate:
+            return plate.rsplit("-", 1)[0]
+        return plate
+
+    seen = []
+    for row in data_rows:
+        plate = str(ws.cell(row=row, column=COL_L).value or "").strip()
+        if not plate:
+            continue
+        prefix = prefix_of(plate)
+        if prefix not in seen:
+            seen.append(prefix)
+    if len(seen) < 2:
+        return
+
+    fill_prefixes = {p for i, p in enumerate(seen) if i % 2 == 1}
+    for row in data_rows:
+        plate = str(ws.cell(row=row, column=COL_L).value or "").strip()
+        if not plate:
+            continue
+        if prefix_of(plate) in fill_prefixes:
+            ws.cell(row=row, column=COL_L).fill = blue
 
 
 def process_sheet(ws, face):
@@ -84,6 +116,8 @@ def process_sheet(ws, face):
         if summary_row is not None:
             for col in range(1, 7):
                 ws.cell(row=summary_row, column=col).border = Border()
+
+        _alt_fill_plate(ws, data_rows)
 
     print(f"  Sheet {face}: {len(groups)}组")
 
